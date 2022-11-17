@@ -1,0 +1,92 @@
+public with sharing class KeyAccountquery {
+    @AuraEnabled(cacheable=true)
+    public static List<keyaccountwrapperclass> KeyAccountlist(string recordtype, string acctype,string sales, date fdate, date tdate){
+        
+        string Defaultquery;
+        
+        
+        list<keyaccountwrapperclass> keywrapperlist = new list<keyaccountwrapperclass>();
+        if(recordtype!=null){
+              Defaultquery = 'Select Id,Opportunity_Product__r.opportunity__r.Region__c,Opportunity_Product__r.opportunity__r.Inspire_Sales_Area__c,Opportunity_Product__r.opportunity__r.Account.Sales_Area__c,Opportunity_Product__r.opportunity__r.Account.Name,Opportunity_Product__r.Opportunity__r.name,Opportunity_Product__r.opportunity__r.Total_Estimated_Quantity_Sq_M__c,Opportunity_Product__r.opportunity__r.Total_Appropriated_Quantity__c from Product_Forecast__c where Opportunity_Product__r.opportunity__r.RecordType.Name =: recordtype ';
+        }
+            
+        if(sales!=null){
+          Defaultquery = Defaultquery+'And Opportunity_Product__r.opportunity__r.Account.Sales_Area__c =:sales';
+        }
+         
+        if(acctype=='Strategic Account'& acctype!=null){
+            Defaultquery =Defaultquery+' And Opportunity_Product__r.opportunity__r.Account.Strategic_Account__c = True';
+        }
+        if(acctype=='National Key Account'& acctype!=null){
+            Defaultquery =Defaultquery+' And Opportunity_Product__r.opportunity__r.Account.National_Key_Account__c = True';
+        }
+        if(acctype=='Build +'& acctype!=null){
+            Defaultquery =Defaultquery+' And Opportunity_Product__r.opportunity__r.Account.Build__c = True';
+        }
+        if(acctype=='Udaan'& acctype!=null){
+            Defaultquery =Defaultquery+' And Opportunity_Product__r.opportunity__r.Account.Udaan__c = True';
+        }
+        if(fdate!=null){
+           Defaultquery = Defaultquery+' And Forecast_Date__c >=:fdate';
+        }
+        if(tdate!=null){
+            Defaultquery = Defaultquery+' AND Forecast_Date__c <=:tdate';
+        }
+        
+        //system.debug('recordtype===>'+query2);
+        // Defaultquery += query2;
+        system.debug('recordtype===>'+Defaultquery);
+        system.debug('acctype===>'+acctype);
+        system.debug('sales===>'+sales);
+        system.debug('fdate===>'+fdate);
+        system.debug('tdate===>'+tdate);
+        
+             for(Product_Forecast__c facc: database.query(Defaultquery)){
+                                                                       
+                       keywrapperlist.add(new keyaccountwrapperclass(facc)); 
+                                 system.debug('facc===>'+Defaultquery);
+             }
+        
+        string ErrorMessage = 'No Records Found';
+        try{  
+            
+          return keywrapperlist; 
+           
+        } catch (Exception e) { throw new AuraHandledException(ErrorMessage);
+                               
+           }
+     }
+    public class keyaccountwrapperclass{
+       
+        @AuraEnabled
+        public string AccountName;
+        @AuraEnabled
+        Public string opportunityName;
+        @AuraEnabled
+        public string opportunityRegion;
+        @AuraEnabled
+        public decimal TotalEstimatedQuantity;
+        @AuraEnabled
+        public decimal AppropriatedQuantity;
+        @AuraEnabled
+        public string InspireSalesArea;
+        @AuraEnabled
+        Public string SalesArea;
+        
+      
+        Public keyaccountwrapperclass(Product_Forecast__c facc){
+              this.AccountName = facc.Opportunity_Product__r.opportunity__r.Account.Name;                           
+              this.opportunityName = facc.Opportunity_Product__r.Opportunity__r.name;
+              this.opportunityRegion = facc.Opportunity_Product__r.opportunity__r.Region__c;
+              this.TotalEstimatedQuantity = facc.Opportunity_Product__r.opportunity__r.Total_Estimated_Quantity_Sq_M__c;
+              this.AppropriatedQuantity = facc.Opportunity_Product__r.opportunity__r.Total_Appropriated_Quantity__c;
+              this.InspireSalesArea = facc.Opportunity_Product__r.opportunity__r.Inspire_Sales_Area__c;
+              this.SalesArea = facc.Opportunity_Product__r.opportunity__r.Account.Sales_Area__c;  
+              
+        } 
+    } 
+        
+       
+    
+
+}
