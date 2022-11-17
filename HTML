@@ -1,0 +1,63 @@
+<template>
+    <lightning-card icon-name="standard:data_integration_hub" title='Key Accounts'>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-large-size_2-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
+                <div class="slds-box slds-box_small">
+                <span>
+                <template if:true={picvalues.data}>
+                    <lightning-combobox label="Business" value={recordtype} required="true"
+                                        options={business} onchange={handlebusinessChange}>
+                                        </lightning-combobox>
+                    <lightning-combobox label="Sales Area" value={sales} 
+                                        options={picvalues.data.values}
+                                        onchange={handlesalesareaChange}>
+                                        </lightning-combobox>
+                    <lightning-combobox label="Type Of Account" value={accounttype} 
+                                        options={options} onchange={handleaccounttypeChange}>
+                                        </lightning-combobox>
+                    
+                    <lightning-input label="From Date" 
+                                     type="date"
+                                     value={fromdate}
+                                     onchange={fromDateChange}>
+                                     </lightning-input>
+                    <lightning-input label="To Date" 
+                                     type="date"
+                                     value={todate}
+                                     onchange={toDateChange}>
+                                     </lightning-input>
+                    <br/>
+                    <lightning-button label="Submit"
+                                      variant="brand-outline" 
+                                      class="slds-var-m-around_xx-small"
+                                      onclick={submit}></lightning-button>
+                    <template if:true={datatable}>                  
+                    <lightning-button label="Export"
+                                      variant="brand"
+                                      icon-name="utility:outcome" 
+                                      class="slds-var-m-around_xx-small"
+                                      onclick={exportData}></lightning-button></template>
+                    </template>
+              </span>
+            </div></div>
+            <div class="slds-col slds-large-size_10-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
+              <span>
+                
+                <template if:true={datatable}>
+                  <div class="slds-box slds-box_small">
+                <lightning-datatable key-field="opportunityName"
+                                     data={data}
+                                     columns={columns}
+                                     onrowaction={handleRowAction}
+                                     show-row-number-column
+                                     hide-checkbox-column></lightning-datatable>
+                                    </div>                  
+                                    </template>
+                                    </span>
+                <div style="margin-left: 3%" class="slds-text-color_destructive">
+                                    <b>{error}</b>
+                </div>
+            </div>
+          </div>
+</lightning-card>
+</template>
